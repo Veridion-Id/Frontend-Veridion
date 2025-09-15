@@ -93,10 +93,10 @@ export function ConnectWallet() {
     <Button 
       onClick={handleConnectWallet}
       disabled={isConnecting}
-      className="bg-black hover:bg-button-verify/80 px-8 py-4 text-lg"
+      className="bg-transparent border border-white hover:bg-white/10 px-6 py-3 text-base text-white"
     >
-      <Wallet size={24}  />
-      {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+      <Wallet size={20} className="mr-2" />
+      {isConnecting ? 'Connecting...' : 'Connect your wallet'}
     </Button>
   );
 }

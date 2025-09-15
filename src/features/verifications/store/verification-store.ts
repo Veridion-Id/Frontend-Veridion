@@ -38,8 +38,11 @@ export const useVerificationStore = create<VerificationState>()(
         const state = get();
         const now = new Date();
         
-        console.log('Completing verification:', { id, type, points });
-        console.log('Current state:', state);
+        // Verificar si ya existe la verificación para evitar duplicar puntos
+        const existingVerification = state.completedVerifications[id];
+        if (existingVerification?.completed) {
+          return; // Ya está completada, no hacer nada
+        }
         
         set({
           completedVerifications: {
@@ -54,8 +57,6 @@ export const useVerificationStore = create<VerificationState>()(
           },
           totalPoints: state.totalPoints + points,
         });
-        
-        console.log('New state after completion:', get());
       },
       
       resetVerification: (id: VerificationType) => {

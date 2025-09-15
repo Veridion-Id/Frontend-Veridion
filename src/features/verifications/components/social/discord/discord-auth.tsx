@@ -18,25 +18,33 @@ export function DiscordAuth({ onSuccess, onError }: DiscordAuthProps) {
     setIsLoading(true);
     
     try {
-      // Import the Discord auth function dynamically
-      const { authenticateWithDiscord } = await import('./discord-api');
-      
-      // Authenticate with Discord
-      const user = await authenticateWithDiscord(code);
+      // Call the API endpoint instead of direct import
+      const response = await fetch('/verifications/discord', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to authenticate with Discord');
+      }
+
+      const data = await response.json();
+      const user = data.user;
 
       // Complete the verification
       completeVerification('discord', 'social', 6);
       
-      // Call success callback
-      onSuccess?.(user);
-      console.log('Discord authentication successful:', user);
+          // Call success callback
+          onSuccess?.(user);
       
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
       
-    } catch (error) {
-      console.error('Discord authentication error:', error);
-      onError?.(error);
+        } catch (error) {
+          onError?.(error);
     } finally {
       setIsLoading(false);
     }
@@ -56,11 +64,10 @@ export function DiscordAuth({ onSuccess, onError }: DiscordAuthProps) {
   const handleDiscordLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
 
-    if (!clientId) {
-      console.error('Discord Client ID not configured');
-      onError?.('Discord Client ID not configured');
-      return;
-    }
+        if (!clientId) {
+          onError?.('Discord Client ID not configured');
+          return;
+        }
 
     // Discord OAuth URL
     const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}&response_type=code&scope=identify%20email&state=discord_verification`;

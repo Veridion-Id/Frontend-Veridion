@@ -19,7 +19,13 @@ interface DiscordUser {
 export async function exchangeCodeForToken(code: string): Promise<string> {
   const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
   const clientSecret = process.env.DISCORD_CLIENT_SECRET;
-  const redirectUri = 'http://localhost:3000/callback';
+  const redirectUri = 'http://localhost:3000/dashboard';
+
+  console.log('Discord OAuth Config:', {
+    clientId: clientId ? '✅ Set' : '❌ Missing',
+    clientSecret: clientSecret ? '✅ Set' : '❌ Missing',
+    redirectUri,
+  });
 
   if (!clientId || !clientSecret) {
     throw new Error('Discord OAuth not configured');
@@ -40,15 +46,30 @@ export async function exchangeCodeForToken(code: string): Promise<string> {
   });
 
   if (!response.ok) {
-    const errorData = await response.text();
-    throw new Error(`Failed to exchange code for token: ${errorData}`);
+    const errorText = await response.text();
+    console.error('Discord Token Exchange Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      error: errorText,
+    });
+    throw new Error(`Failed to exchange code for token: ${response.status} ${response.statusText}`);
   }
 
   const data: DiscordTokenResponse = await response.json();
+  console.log('Discord Token Response:', {
+    hasToken: !!data.access_token,
+    tokenType: data.token_type,
+    scope: data.scope,
+  });
   return data.access_token;
 }
 
 export async function getUserData(accessToken: string): Promise<DiscordUser> {
+  console.log('Getting Discord user data with token:', {
+    hasToken: !!accessToken,
+    tokenLength: accessToken?.length,
+  });
+
   const response = await fetch('https://discord.com/api/users/@me', {
     headers: {
       'Authorization': `Bearer ${accessToken}`,
@@ -56,7 +77,13 @@ export async function getUserData(accessToken: string): Promise<DiscordUser> {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to get user information');
+    const errorText = await response.text();
+    console.error('Discord API Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      error: errorText,
+    });
+    throw new Error(`Failed to get user information: ${response.status} ${response.statusText}`);
   }
 
   const user: DiscordUser = await response.json();

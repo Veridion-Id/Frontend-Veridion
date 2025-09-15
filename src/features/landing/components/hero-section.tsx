@@ -4,9 +4,11 @@ import { Logo } from "@/shared/components/icons/logotype";
 import { Symbol } from "@/shared/components/icons/symbol";
 import { ConnectWallet } from "@/features/wallet/components/ConnectWallet";
 import { useEffect, useRef } from "react";
+import { useVerificationStore } from "@/features/verifications/store/verification-store";
 
 export function HeroSection() {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const { totalPoints } = useVerificationStore();
 
     useEffect(() => {
         const video = videoRef.current;
@@ -57,7 +59,7 @@ export function HeroSection() {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 h-screen flex items-start pt-[15rem]">
+            <div className="relative z-10 h-screen flex items-start pt-[16rem]">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                         {/* Left Side - Score Card */}
@@ -71,7 +73,7 @@ export function HeroSection() {
                                     
                                     <div className="flex items-center justify-center gap-6">
                                         <Symbol size="xxxl" className="text-white" />
-                                        <div className="text-8xl font-bold text-white">24.1</div>
+                                        <div className="text-8xl font-bold text-white">{totalPoints}</div>
                                     </div>
                                 </div>
                             </Card>

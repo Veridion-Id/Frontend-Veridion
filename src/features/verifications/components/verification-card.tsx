@@ -7,7 +7,7 @@ import { Circle, CheckCircle } from "lucide-react";
 import { type PhysicalVerification } from "../constants/physical-verifications";
 import { type SocialMediaVerification } from "../constants/social-verifications";
 import { useVerificationStatus } from "../hooks/use-verification-status";
-import { type VerificationType } from "../store/verification-store";
+import { useVerificationStore, type VerificationType } from "../store/verification-store";
 
 interface VerificationCardProps {
   method: PhysicalVerification | SocialMediaVerification;
@@ -18,11 +18,17 @@ interface VerificationCardProps {
 export function VerificationCard({ method, type = "physical", onClick }: VerificationCardProps) {
   const isSocialMedia = type === "social";
   const { isCompleted, isHydrated } = useVerificationStatus(method.id as VerificationType);
+  
+  // Forzar re-render cuando cambie el estado
+  const { completedVerifications } = useVerificationStore();
+  const currentVerification = completedVerifications[method.id as VerificationType];
+  const isActuallyCompleted = currentVerification?.completed || false;
+
 
   return (
         <Card
           className={`border-[2px] relative z-10 cursor-pointer hover:scale-[1.02] transform transition-all duration-200 ${
-            isCompleted 
+            isActuallyCompleted 
               ? 'bg-dark-green-bg border-green-500 hover:border-green-400' 
               : 'bg-gradient-to-br from-card-darker to-card-dark border-gray-700/30 hover:border-gray-600/50'
           }`}
@@ -33,14 +39,14 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
           {/* Header */}
           <div className="flex items-start gap-2 sm:gap-3">
             <div className={`p-1 sm:p-1.5 rounded-lg ${
-              isCompleted 
+              isActuallyCompleted 
                 ? 'bg-green-500/20' 
                 : 'bg-gray-800/50'
             }`}>
               <method.icon
                 size={isSocialMedia ? 16 : 14}
                 className={`${isSocialMedia ? 'sm:w-4 sm:h-4' : 'h-3 w-3 sm:h-4 sm:w-4'} ${
-                  isCompleted 
+                  isActuallyCompleted 
                     ? 'text-green-300/80' 
                     : 'text-gray-300'
                 }`}
@@ -48,12 +54,12 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
             </div>
             <div className="flex-1">
               <h4 className={`font-semibold text-[13px] sm:text-sm ${
-                isCompleted 
+                isActuallyCompleted 
                   ? 'text-green-200' 
                   : 'text-white'
               }`}>{method.title}</h4>
               <p className={`text-[13px] mt-1 leading-relaxed ${
-                isCompleted 
+                isActuallyCompleted 
                   ? 'text-green-300/80' 
                   : 'text-gray-400'
               }`}>
@@ -69,12 +75,12 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
                 <Badge
                   variant="outline"
                   className={`rounded-full p-1.5 text-xs ${
-                    isCompleted
+                    isActuallyCompleted
                       ? 'border-green-500 text-green-400 bg-green-500/10'
                       : 'border-gray-600 text-gray-300 bg-button-verify'
                   }`}
                 >
-                  {isHydrated && isCompleted ? (
+                  {isHydrated && isActuallyCompleted ? (
                     <CheckCircle className="h-4 w-4 mr-1 fill-current" />
                   ) : (
                     <Circle className="h-4 w-4 mr-1 fill-current" />

@@ -15,29 +15,39 @@ export function GitHubAuth({ onSuccess, onError }: GitHubAuthProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { completeVerification, isVerificationCompleted } = useVerificationStore();
 
+
   const handleGitHubCallback = async (code: string) => {
     setIsLoading(true);
     
     try {
-      // Import the GitHub auth function dynamically
-      const { authenticateWithGitHub } = await import('./github-api');
-      
-      // Authenticate with GitHub
-      const user = await authenticateWithGitHub(code);
+      // Call the API endpoint instead of direct import
+      const response = await fetch('/verifications/github', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to authenticate with GitHub');
+      }
+
+      const data = await response.json();
+      const user = data.user;
 
       // Complete the verification
       completeVerification('github', 'social', 6);
       
-      // Call success callback
-      onSuccess?.(user);
-      console.log('GitHub authentication successful:', user);
+          // Call success callback
+          onSuccess?.(user);
       
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
       
-    } catch (error) {
-      console.error('GitHub authentication error:', error);
-      onError?.(error);
+        } catch (error) {
+          onError?.(error);
     } finally {
       setIsLoading(false);
     }
@@ -54,21 +64,21 @@ export function GitHubAuth({ onSuccess, onError }: GitHubAuthProps) {
     }
   }, [handleGitHubCallback]);
 
-  const handleGitHubLogin = () => {
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-    
-    if (!clientId) {
-      console.error('GitHub Client ID not configured');
-      onError?.('GitHub Client ID not configured');
-      return;
-    }
+      const handleGitHubLogin = () => {
+        const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+        
+        if (!clientId) {
+          onError?.('GitHub Client ID not configured');
+          return;
+        }
 
-    // GitHub OAuth URL
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(window.location.origin + '/dashboard')}&scope=user:email&state=github_verification`;
-    
-    // Redirect to GitHub OAuth
-    window.location.href = githubAuthUrl;
-  };
+        // GitHub OAuth URL
+        const redirectUri = window.location.origin + '/dashboard';
+        const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user:email&state=github_verification`;
+        
+        // Redirect to GitHub OAuth
+        window.location.href = githubAuthUrl;
+      };
 
   const isCompleted = isVerificationCompleted('github');
 
@@ -82,8 +92,8 @@ export function GitHubAuth({ onSuccess, onError }: GitHubAuthProps) {
   }
 
   return (
-    <Button
-      onClick={handleGitHubLogin}
+        <Button
+          onClick={handleGitHubLogin}
       disabled={isLoading}
       className="w-full bg-gray-900 hover:bg-gray-800 text-white border border-gray-700"
     >

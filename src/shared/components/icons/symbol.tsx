@@ -1,0 +1,36 @@
+import { cn } from "@/lib/utils";
+
+interface SymbolProps {
+  className?: string;
+  size?: "sm" | "md" | "lg" | "xl" | "xxl" | "xxxl";
+}
+
+const sizeConfig = {
+  sm: { width: 20, height: 15 },
+  md: { width: 24, height: 18 },
+  lg: { width: 32, height: 24 },
+  xl: { width: 40, height: 30 },
+  xxl: { width: 50, height: 40 },
+  xxxl: { width: 70, height: 60 },
+};
+
+export function Symbol({ className, size = "lg" }: SymbolProps) {
+  const { width, height } = sizeConfig[size];
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 32 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("text-white", className)}
+      aria-label="Veridion Symbol"
+    >
+      <path
+        d="M14.1935 0.600098C14.5626 0.600098 14.9112 0.778406 15.1327 1.08057L21.4646 9.71962C21.6858 10.0217 22.0336 10.2 22.4025 10.2001C22.6985 10.2001 22.9385 9.95458 22.9385 9.6517V4.2001C22.9385 3.53736 23.4647 3.0001 24.1123 3.0001H29.9758C30.6232 3.00045 31.1485 3.53757 31.1485 4.2001V10.2001C31.1485 10.8626 30.6232 11.3997 29.9758 11.4001H25.9206C25.2729 11.4001 24.7479 11.9373 24.7479 12.6001V22.2001C24.7479 22.8629 24.2229 23.4001 23.5752 23.4001H15.9893C15.231 23.4001 14.5192 23.0251 14.079 22.3934L0.219635 2.49619C-0.333373 1.70185 0.221545 0.600098 1.17475 0.600098H14.1935Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}

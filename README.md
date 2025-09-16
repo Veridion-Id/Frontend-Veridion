@@ -44,13 +44,6 @@ This application is where users build their **Human Score** through various veri
 ### 💰 **Stellar Integration**
 - **Transaction Analysis**: Count and analyze Stellar transactions
 - **Wallet Integration**: Connect and verify Stellar wallets
-- **Human Score Tiers**:
-  - 🥉 **Stellar Beginner** (1+ transactions) - 1 point
-  - 🥈 **Stellar User** (5+ transactions) - 5 points
-  - 🥇 **Stellar Active** (10+ transactions) - 10 points
-  - 💎 **Stellar Pro** (25+ transactions) - 15 points
-  - 🏆 **Stellar Expert** (50+ transactions) - 25 points
-  - 👑 **Stellar Master** (100+ transactions) - 50 points
 
 ## 🛠️ Tech Stack
 

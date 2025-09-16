@@ -12,8 +12,9 @@ import { Badge } from '@/shared/ui/badge';
  * Este componente muestra cómo usar el servicio de Stellar API
  */
 export function StellarExample() {
-  const [exampleAccountId, setExampleAccountId] = useState('GABC123...');
-  const [verificationResult, setVerificationResult] = useState<any>(null);
+  const [exampleAccountId] = useState('GABC123...');
+  console.log('Example account ID:', exampleAccountId); // Para evitar warning de variable no usada
+  const [verificationResult, setVerificationResult] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Ejemplo de cuentas de testnet para probar
@@ -106,52 +107,52 @@ export function StellarExample() {
           <CardContent>
             {verificationResult.error ? (
               <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400">Error: {verificationResult.error}</p>
+                <p className="text-red-400">Error: {verificationResult.error as string}</p>
               </div>
             ) : verificationResult.success ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center p-4 bg-gray-800/30 rounded-lg">
                     <p className="text-2xl font-bold text-white">
-                      {verificationResult.transactionCount}
+                      {verificationResult.transactionCount as number}
                     </p>
                     <p className="text-sm text-gray-400">Transactions</p>
                   </div>
                   
                   <div className="text-center p-4 bg-gray-800/30 rounded-lg">
                     <Badge className="bg-blue-100 text-blue-800 text-lg px-3 py-1">
-                      {verificationResult.points} Points
+                      {verificationResult.points as number} Points
                     </Badge>
                     <p className="text-sm text-gray-400 mt-1">Earned</p>
                   </div>
                   
                   <div className="text-center p-4 bg-gray-800/30 rounded-lg">
                     <Badge className="bg-green-100 text-green-800 text-sm px-3 py-1">
-                      {verificationResult.level}
+                      {verificationResult.level as string}
                     </Badge>
                     <p className="text-sm text-gray-400 mt-1">Level</p>
                   </div>
                 </div>
 
-                {verificationResult.accountInfo && (
+                {verificationResult.accountInfo ? (
                   <div>
                     <h4 className="text-white font-semibold mb-2">Account Information</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                       <div>
                         <span className="text-gray-400">Account ID:</span>
                         <p className="font-mono text-white break-all">
-                          {verificationResult.accountInfo.account_id}
+                          {(verificationResult.accountInfo as Record<string, unknown>)?.account_id as string}
                         </p>
                       </div>
                       <div>
                         <span className="text-gray-400">Sequence:</span>
                         <p className="font-mono text-white">
-                          {verificationResult.accountInfo.sequence}
+                          {(verificationResult.accountInfo as Record<string, unknown>)?.sequence as string}
                         </p>
                       </div>
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             ) : null}
           </CardContent>

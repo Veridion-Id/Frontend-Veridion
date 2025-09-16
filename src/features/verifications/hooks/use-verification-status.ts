@@ -5,14 +5,12 @@ import { useVerificationStore, type VerificationType } from '../store/verificati
 
 export function useVerificationStatus(verificationId: VerificationType) {
   const [isHydrated, setIsHydrated] = useState(false);
-  const { isVerificationCompleted, completedVerifications } = useVerificationStore();
+  const { isVerificationCompleted } = useVerificationStore();
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  // Forzar re-render cuando cambie el store
-  const storeState = useVerificationStore((state) => state.completedVerifications);
   
   // Usar directamente el store para obtener el estado actual
   const isCompleted = isHydrated ? isVerificationCompleted(verificationId) : false;

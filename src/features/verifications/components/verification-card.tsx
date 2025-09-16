@@ -10,7 +10,7 @@ import { type BlockchainVerification } from "../constants/blockchain-verificatio
 import { useVerificationStatus } from "../hooks/use-verification-status";
 import { useVerificationStore, type VerificationType } from "../store/verification-store";
 import { useVerificationModal } from "../hooks/use-verification-modal";
-import { StellarModal } from "./blockchain/stellar-modal";
+import { VerificationModal } from "./verification-modal";
 
 interface VerificationCardProps {
   method: PhysicalVerification | SocialMediaVerification | BlockchainVerification;
@@ -21,7 +21,7 @@ interface VerificationCardProps {
 export function VerificationCard({ method, type = "physical", onClick }: VerificationCardProps) {
   const isSocialMedia = type === "social";
   const isBlockchain = type === "blockchain";
-  const { isCompleted, isHydrated } = useVerificationStatus(method.id as VerificationType);
+  const { isHydrated } = useVerificationStatus(method.id as VerificationType);
   
   // Forzar re-render cuando cambie el estado
   const { completedVerifications } = useVerificationStore();
@@ -29,12 +29,12 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
   const isActuallyCompleted = currentVerification?.completed || false;
 
   // Modal handling
-  const { isOpen, selectedVerification, openModal, closeModal, isStellarModal } = useVerificationModal();
+  const { isOpen, selectedVerification, openModal, closeModal } = useVerificationModal();
 
   const handleCardClick = () => {
     if (onClick) {
       onClick();
-    } else if (method.id === 'stellar-transactions') {
+    } else {
       openModal(method.id);
     }
   };
@@ -109,11 +109,19 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
       </CardContent>
     </Card>
     
-    {/* Stellar Modal */}
-    {isStellarModal && (
-      <StellarModal
+    {/* Verification Modal */}
+    {selectedVerification && (
+      <VerificationModal
         isOpen={isOpen}
         onClose={closeModal}
+        title={selectedVerification.title}
+        points={selectedVerification.points}
+        time={selectedVerification.time}
+        price={selectedVerification.price}
+        status={selectedVerification.status}
+        achievements={selectedVerification.achievements}
+        requirements={selectedVerification.requirements}
+        verificationId={method.id}
       />
     )}
   </>

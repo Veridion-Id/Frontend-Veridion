@@ -21,7 +21,6 @@ export const StellarDashboard: React.FC<StellarDashboardProps> = ({
   const [activeTab, setActiveTab] = useState('transactions');
 
   const {
-    transactions,
     operations,
     payments,
     accountInfo,
@@ -36,9 +35,9 @@ export const StellarDashboard: React.FC<StellarDashboardProps> = ({
     await refreshData(accountId);
   };
 
-  const formatBalance = (balance: any) => {
+  const formatBalance = (balance: Record<string, unknown>) => {
     if (balance.asset_type === 'native') {
-      return `${parseFloat(balance.balance).toFixed(7)} XLM`;
+      return `${parseFloat(balance.balance as string).toFixed(7)} XLM`;
     }
     return `${balance.balance} ${balance.asset_code || balance.asset_type}`;
   };
@@ -117,21 +116,24 @@ export const StellarDashboard: React.FC<StellarDashboardProps> = ({
             <div>
               <p className="text-sm text-gray-600 mb-2">Balances</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {accountInfo.balances.map((balance: any, index: number) => (
+                  {accountInfo.balances.map((balance: Record<string, unknown>, index: number) => (
                   <div key={index} className="bg-gray-50 p-3 rounded-lg">
                     <div className="flex justify-between items-center">
                       <span className="font-medium">
-                        {balance.asset_type === 'native' ? 'XLM' : balance.asset_code}
+                        {balance.asset_type === 'native' ? 'XLM' : (balance.asset_code as string)}
                       </span>
                       <span className="font-mono text-sm">
                         {formatBalance(balance)}
                       </span>
                     </div>
-                    {balance.asset_issuer && (
-                      <p className="text-xs text-gray-500 mt-1 break-all">
-                        Issuer: {balance.asset_issuer}
-                      </p>
-                    )}
+                    {(() => {
+                      const issuer = balance.asset_issuer;
+                      return issuer && typeof issuer === 'string' ? (
+                        <p className="text-xs text-gray-500 mt-1 break-all">
+                          Issuer: {issuer}
+                        </p>
+                      ) : null;
+                    })()}
                   </div>
                 ))}
               </div>

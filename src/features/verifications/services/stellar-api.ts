@@ -112,15 +112,15 @@ class StellarApiService {
       if (!records || !Array.isArray(records)) {
         return [];
       }
-      return records.map((tx: any) => ({
-        id: tx.id,
-        hash: tx.hash,
-        created_at: tx.created_at,
-        fee_charged: tx.fee_charged,
-        operation_count: tx.operation_count,
-        memo: tx.memo,
-        successful: tx.successful,
-        source_account: tx.source_account
+      return records.map((tx: Record<string, unknown>) => ({
+        id: tx.id as string,
+        hash: tx.hash as string,
+        created_at: tx.created_at as string,
+        fee_charged: tx.fee_charged as string,
+        operation_count: tx.operation_count as number,
+        memo: tx.memo as string,
+        successful: tx.successful as boolean,
+        source_account: tx.source_account as string
       }));
     } catch (error) {
       console.error('Error getting account transactions:', error);
@@ -144,16 +144,16 @@ class StellarApiService {
       if (!records || !Array.isArray(records)) {
         return [];
       }
-      return records.map((op: any) => ({
-        id: op.id,
-        type: op.type,
-        created_at: op.created_at,
-        transaction_hash: op.transaction_hash,
-        source_account: op.source_account,
-        amount: op.amount,
-        asset_type: op.asset_type,
-        from: op.from,
-        to: op.to
+      return records.map((op: Record<string, unknown>) => ({
+        id: op.id as string,
+        type: op.type as string,
+        created_at: op.created_at as string,
+        transaction_hash: op.transaction_hash as string,
+        source_account: op.source_account as string,
+        amount: op.amount as string,
+        asset_type: op.asset_type as string,
+        from: op.from as string,
+        to: op.to as string
       }));
     } catch (error) {
       console.error('Error getting account operations:', error);
@@ -177,16 +177,16 @@ class StellarApiService {
       if (!records || !Array.isArray(records)) {
         return [];
       }
-      return records.map((payment: any) => ({
-        id: payment.id,
-        from: payment.from,
-        to: payment.to,
-        amount: payment.amount,
-        asset_type: payment.asset_type,
-        asset_code: payment.asset_code,
-        asset_issuer: payment.asset_issuer,
-        created_at: payment.created_at,
-        transaction_hash: payment.transaction_hash
+      return records.map((payment: Record<string, unknown>) => ({
+        id: payment.id as string,
+        from: payment.from as string,
+        to: payment.to as string,
+        amount: payment.amount as string,
+        asset_type: payment.asset_type as string,
+        asset_code: payment.asset_code as string,
+        asset_issuer: payment.asset_issuer as string,
+        created_at: payment.created_at as string,
+        transaction_hash: payment.transaction_hash as string
       }));
     } catch (error) {
       console.error('Error getting account payments:', error);
@@ -311,15 +311,15 @@ class StellarApiService {
       
       console.log(`Found ${records.length} latest transactions`);
       
-      return records.map((tx: any) => ({
-        id: tx.id,
-        hash: tx.hash,
-        created_at: tx.created_at,
-        fee_charged: tx.fee_charged,
-        operation_count: tx.operation_count,
-        memo: tx.memo,
-        successful: tx.successful,
-        source_account: tx.source_account
+      return records.map((tx: Record<string, unknown>) => ({
+        id: tx.id as string,
+        hash: tx.hash as string,
+        created_at: tx.created_at as string,
+        fee_charged: tx.fee_charged as string,
+        operation_count: tx.operation_count as number,
+        memo: tx.memo as string,
+        successful: tx.successful as boolean,
+        source_account: tx.source_account as string
       }));
     } catch (error) {
       console.error('Error getting latest transactions:', error);

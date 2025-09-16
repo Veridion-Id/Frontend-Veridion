@@ -7,7 +7,7 @@ import { Input } from '@/shared/ui/input';
 import { Badge } from '@/shared/ui/badge';
 import { Separator } from '@/shared/components/separator';
 import { StellarIcon } from '@/shared/components/icons/stellar-icon';
-import { stellarApi, stellarMainnetApi, StellarAccountInfo, testStellarApi } from '../../services/stellar-api';
+import { stellarApi, stellarMainnetApi, StellarAccountInfo } from '../../services/stellar-api';
 import { useVerificationStore } from '../../store/verification-store';
 import { useWalletStore } from '@/features/wallet/store/wallet-store';
 import { CheckCircle, Circle, Loader2, ExternalLink } from 'lucide-react';
@@ -29,7 +29,7 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
   } | null>(null);
   const [isVerified, setIsVerified] = useState(false);
 
-  const { completeVerification, isVerificationCompleted } = useVerificationStore();
+  const { completeVerification } = useVerificationStore();
   const { publicKey, isConnected, network } = useWalletStore();
 
   // Auto-fill with connected wallet if available
@@ -131,6 +131,41 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
     return `${balance.balance} ${balance.asset_code || balance.asset_type}`;
   };
 
+  const getPointsBreakdown = (_transactionCount: number) => {
+    return [
+      {
+        minTransactions: 100,
+        points: 50,
+        description: 'Stellar Master'
+      },
+      {
+        minTransactions: 50,
+        points: 25,
+        description: 'Stellar Expert'
+      },
+      {
+        minTransactions: 25,
+        points: 15,
+        description: 'Stellar Pro'
+      },
+      {
+        minTransactions: 10,
+        points: 10,
+        description: 'Stellar Active'
+      },
+      {
+        minTransactions: 5,
+        points: 5,
+        description: 'Stellar User'
+      },
+      {
+        minTransactions: 1,
+        points: 1,
+        description: 'Stellar Beginner'
+      }
+    ];
+  };
+
   const getPointsColor = (points: number) => {
     if (points >= 25) return 'bg-green-100 text-green-800';
     if (points >= 10) return 'bg-blue-100 text-blue-800';
@@ -196,7 +231,7 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
             <Button 
               onClick={handleVerify}
               disabled={loading || !accountId.trim()}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              className="border border-white hover:bg-white/10"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -206,26 +241,7 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
             </Button>
           </div>
           
-          {/* Test buttons */}
-          <div className="mt-2 flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setAccountId('GDKBXCKZ')}
-              className="text-xs"
-            >
-              Test with GDKBXCKZ
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => testStellarApi(accountId || 'GDKBXCKZ')}
-              className="text-xs"
-            >
-              Debug API
-            </Button>
-          </div>
-          
+
           {!isConnected && (
             <p className="text-sm text-gray-400">
               Connect your wallet to automatically verify your account, or enter a Stellar account ID manually.
@@ -237,6 +253,51 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
               <p className="text-red-400 text-sm">{error}</p>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Points Breakdown - Always Visible */}
+      <Card className="bg-gradient-to-br from-card-darker to-card-dark border-gray-700/30">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <StellarIcon size={20} className="text-purple-400" />
+            Points Breakdown
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {getPointsBreakdown(0).map((tier, index) => (
+              <div key={index} className={`flex items-center justify-between p-3 rounded-lg ${
+                verificationResult && verificationResult.transactionCount >= tier.minTransactions 
+                  ? 'bg-green-500/10 border border-green-500/20' 
+                  : 'bg-gray-800/30'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-3 h-3 rounded-full ${
+                    verificationResult && verificationResult.transactionCount >= tier.minTransactions 
+                      ? 'bg-green-400' 
+                      : 'bg-gray-600'
+                  }`} />
+                  <div>
+                    <p className="text-white font-medium">{tier.description}</p>
+                    <p className="text-sm text-gray-400">{tier.minTransactions}+ transactions</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`font-bold ${
+                    verificationResult && verificationResult.transactionCount >= tier.minTransactions 
+                      ? 'text-green-400' 
+                      : 'text-gray-400'
+                  }`}>
+                    {tier.points} points
+                  </p>
+                  {verificationResult && verificationResult.transactionCount >= tier.minTransactions && (
+                    <p className="text-xs text-green-400">✓ Achieved</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
@@ -259,13 +320,13 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
               <div>
                 <p className="text-sm text-gray-400 mb-1">Account ID</p>
                 <p className="font-mono text-sm text-white break-all bg-gray-800/50 p-2 rounded">
-                  {verificationResult.accountInfo.account_id}
+                  {verificationResult.accountInfo?.account_id}
                 </p>
               </div>
               <div>
                 <p className="text-sm text-gray-400 mb-1">Sequence</p>
                 <p className="font-mono text-sm text-white bg-gray-800/50 p-2 rounded">
-                  {verificationResult.accountInfo.sequence}
+                  {verificationResult.accountInfo?.sequence}
                 </p>
               </div>
             </div>
@@ -296,17 +357,18 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
               </div>
             </div>
 
+
             {/* Balances */}
-            {verificationResult.accountInfo.balances.length > 0 && (
+            {verificationResult.accountInfo?.balances && verificationResult.accountInfo.balances.length > 0 && (
               <>
                 <Separator className="my-4" />
                 <div>
                   <p className="text-sm text-gray-400 mb-2">Account Balances</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {verificationResult.accountInfo.balances.map((balance, index: number) => (
+                    {verificationResult.accountInfo?.balances.map((balance, index: number) => (
                       <div key={index} className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
                         <span className="text-white text-sm">
-                          {balance.asset_type === 'native' ? 'XLM' : balance.asset_code}
+                          {balance.asset_type === 'native' ? 'XLM' : (balance.asset_code as string)}
                         </span>
                         <span className="font-mono text-sm text-gray-300">
                           {formatBalance(balance)}
@@ -374,7 +436,7 @@ export const StellarVerification: React.FC<StellarVerificationProps> = ({ onComp
               <p className="font-semibold">Verification Completed!</p>
             </div>
             <p className="text-green-300 text-sm mt-1">
-              You've earned {verificationResult?.points} points for your Stellar activity.
+              You&apos;ve earned {verificationResult?.points} points for your Stellar activity.
             </p>
           </CardContent>
         </Card>

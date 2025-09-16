@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { MODAL_DATA } from '../constants/modal-data';
 
 export function useVerificationModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,13 +15,12 @@ export function useVerificationModal() {
     setSelectedVerification(null);
   }, []);
 
-  const isStellarModal = selectedVerification === 'stellar-transactions';
+  const selectedVerificationData = selectedVerification ? MODAL_DATA[selectedVerification as keyof typeof MODAL_DATA] : null;
 
   return {
     isOpen,
-    selectedVerification,
+    selectedVerification: selectedVerificationData,
     openModal,
     closeModal,
-    isStellarModal,
   };
 }

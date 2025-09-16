@@ -6,17 +6,21 @@ import { Badge } from "@/shared/ui/badge";
 import { Circle, CheckCircle } from "lucide-react";
 import { type PhysicalVerification } from "../constants/physical-verifications";
 import { type SocialMediaVerification } from "../constants/social-verifications";
+import { type BlockchainVerification } from "../constants/blockchain-verifications";
 import { useVerificationStatus } from "../hooks/use-verification-status";
 import { useVerificationStore, type VerificationType } from "../store/verification-store";
+import { useVerificationModal } from "../hooks/use-verification-modal";
+import { StellarModal } from "./blockchain/stellar-modal";
 
 interface VerificationCardProps {
-  method: PhysicalVerification | SocialMediaVerification;
-  type?: "physical" | "social";
+  method: PhysicalVerification | SocialMediaVerification | BlockchainVerification;
+  type?: "physical" | "social" | "blockchain";
   onClick?: () => void;
 }
 
 export function VerificationCard({ method, type = "physical", onClick }: VerificationCardProps) {
   const isSocialMedia = type === "social";
+  const isBlockchain = type === "blockchain";
   const { isCompleted, isHydrated } = useVerificationStatus(method.id as VerificationType);
   
   // Forzar re-render cuando cambie el estado
@@ -24,15 +28,27 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
   const currentVerification = completedVerifications[method.id as VerificationType];
   const isActuallyCompleted = currentVerification?.completed || false;
 
+  // Modal handling
+  const { isOpen, selectedVerification, openModal, closeModal, isStellarModal } = useVerificationModal();
+
+  const handleCardClick = () => {
+    if (onClick) {
+      onClick();
+    } else if (method.id === 'stellar-transactions') {
+      openModal(method.id);
+    }
+  };
+
 
   return (
+    <>
         <Card
           className={`border-[2px] relative z-10 cursor-pointer hover:scale-[1.02] transform transition-all duration-200 ${
             isActuallyCompleted 
               ? 'bg-dark-green-bg border-green-500 hover:border-green-400' 
               : 'bg-gradient-to-br from-card-darker to-card-dark border-gray-700/30 hover:border-gray-600/50'
           }`}
-          onClick={onClick}
+          onClick={handleCardClick}
         >
       <CardContent className="p-3 sm:p-4">
         <div className="space-y-2 sm:space-y-3">
@@ -44,8 +60,8 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
                 : 'bg-gray-800/50'
             }`}>
               <method.icon
-                size={isSocialMedia ? 16 : 14}
-                className={`${isSocialMedia ? 'sm:w-4 sm:h-4' : 'h-3 w-3 sm:h-4 sm:w-4'} ${
+                size={isSocialMedia || isBlockchain ? 16 : 14}
+                className={`${isSocialMedia || isBlockchain ? 'sm:w-4 sm:h-4' : 'h-3 w-3 sm:h-4 sm:w-4'} ${
                   isActuallyCompleted 
                     ? 'text-green-300/80' 
                     : 'text-gray-300'
@@ -92,5 +108,14 @@ export function VerificationCard({ method, type = "physical", onClick }: Verific
         </div>
       </CardContent>
     </Card>
+    
+    {/* Stellar Modal */}
+    {isStellarModal && (
+      <StellarModal
+        isOpen={isOpen}
+        onClose={closeModal}
+      />
+    )}
+  </>
   );
 }

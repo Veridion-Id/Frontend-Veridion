@@ -14,10 +14,13 @@ export function useVerificationModal() {
     setSelectedVerification(null);
   }, []);
 
+  const isStellarModal = selectedVerification === 'stellar-transactions';
+
   return {
     isOpen,
     selectedVerification,
     openModal,
     closeModal,
+    isStellarModal,
   };
 }

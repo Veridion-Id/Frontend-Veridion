@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type VerificationType = 'google' | 'github' | 'linkedin' | 'discord' | 'government-id' | 'binance' | 'phone-verification' | 'biometrics' | 'proof-clean-hands';
+export type VerificationType = 'google' | 'github' | 'linkedin' | 'discord' | 'government-id' | 'binance' | 'phone-verification' | 'biometrics' | 'proof-clean-hands' | 'stellar-transactions';
 
 export interface VerificationStatus {
   id: VerificationType;

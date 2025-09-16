@@ -11,6 +11,7 @@ import { GoogleAuth } from './social/google/google-auth';
 import { DiscordAuth } from './social/discord/discord-auth';
 import { GitHubAuth } from './social/github/github-auth';
 import { LinkedInAuth } from './social/linkedin/linkedin-auth';
+import { StellarVerification } from './blockchain/stellar-verification';
 
 interface Achievement {
   readonly title: string;
@@ -182,6 +183,16 @@ export function VerificationModal({
                     }}
                     onError={(error) => {
                       console.error('LinkedIn verification failed:', error);
+                    }}
+                  />
+                ) : verificationId === 'stellar-transactions' ? (
+                  <StellarVerification
+                    onComplete={(points, level, transactionCount) => {
+                      console.log('Stellar verification completed:', { points, level, transactionCount });
+                      onClose();
+                    }}
+                    onError={(error) => {
+                      console.error('Stellar verification failed:', error);
                     }}
                   />
                 ) : (

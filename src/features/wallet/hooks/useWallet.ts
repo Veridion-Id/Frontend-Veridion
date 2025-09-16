@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useWalletStore } from '../store/wallet-store';
-import { getShortAddress as formatShortAddress } from '../services/walletConfig';
-import type { WalletConnectionError } from '../types/wallet.types';
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useWalletStore } from "../store/wallet-store";
+import { getShortAddress as formatShortAddress } from "../services/walletConfig";
+import type { WalletConnectionError } from "../types/wallet.types";
 
 export function useWallet() {
   const router = useRouter();
@@ -21,21 +21,19 @@ export function useWallet() {
   const connectWallet = useCallback(
     (publicKey: string, walletName: string) => {
       setWalletInfo(publicKey, walletName);
-      // Navigate to dashboard after successful connection
-      router.push('/dashboard');
     },
-    [setWalletInfo, router]
+    [setWalletInfo]
   );
 
   const handleDisconnect = useCallback(() => {
     disconnect();
     // Navigate back to home
-    router.push('/');
+    router.push("/");
   }, [disconnect, router]);
 
   const handleConnectionError = useCallback(
     (error: WalletConnectionError) => {
-      console.error('Wallet connection error:', error);
+      console.error("Wallet connection error:", error);
       setConnecting(false);
       // You could add toast notifications here
     },
@@ -43,7 +41,7 @@ export function useWallet() {
   );
 
   const switchNetwork = useCallback(
-    (newNetwork: 'testnet' | 'mainnet') => {
+    (newNetwork: "testnet" | "mainnet") => {
       setNetwork(newNetwork);
     },
     [setNetwork]
@@ -52,7 +50,7 @@ export function useWallet() {
   const getShortAddress = useCallback(
     (address?: string) => {
       const addr = address || publicKey;
-      if (!addr) return '';
+      if (!addr) return "";
       return formatShortAddress(addr);
     },
     [publicKey]
@@ -65,17 +63,17 @@ export function useWallet() {
     publicKey,
     walletName,
     network,
-    
+
     // Actions
     connectWallet,
     handleDisconnect,
     handleConnectionError,
     switchNetwork,
     getShortAddress,
-    
+
     // Computed
     shortAddress: getShortAddress(),
-    isTestnet: network === 'testnet',
-    isMainnet: network === 'mainnet',
+    isTestnet: network === "testnet",
+    isMainnet: network === "mainnet",
   };
 }

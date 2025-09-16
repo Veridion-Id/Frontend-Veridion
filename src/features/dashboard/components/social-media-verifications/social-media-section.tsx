@@ -5,17 +5,19 @@ import { VerificationCard } from "../../../verifications/components/verification
 import { VerificationModal } from "../../../verifications/components/verification-modal";
 import { useVerificationModal } from "../../../verifications/hooks/use-verification-modal";
 import { socialMediaVerifications, type SocialMediaVerification } from "../../../verifications/constants/social-verifications";
-import { getModalData } from "../../../verifications/constants/modal-data";
 import { SectionContainer } from "@/shared/components/section-container";
+import { useState } from "react";
 
 export function SocialMediaSection() {
     const { isOpen, selectedVerification, openModal, closeModal } = useVerificationModal();
+    const [selectedId, setSelectedId] = useState<string | null>(null);
 
     const handleCardClick = (method: SocialMediaVerification) => {
+        setSelectedId(method.id);
         openModal(method.id);
     };
 
-    const modalData = getModalData(selectedVerification || '');
+    const modalData = selectedVerification;
 
     return (
         <>
@@ -51,7 +53,7 @@ export function SocialMediaSection() {
                 <VerificationModal
                     isOpen={isOpen}
                     onClose={closeModal}
-                    verificationId={selectedVerification || undefined}
+                    verificationId={selectedId || undefined}
                     {...modalData}
                 />
             )}

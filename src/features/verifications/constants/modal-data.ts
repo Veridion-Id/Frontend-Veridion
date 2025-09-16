@@ -74,6 +74,25 @@ export const MODAL_DATA = {
       "Must have an active Discord account",
       "Account must be at least 7 days old"
     ]
+  },
+  "stellar-transactions": {
+    title: "Verify your Stellar wallet activity",
+    points: "0-50",
+    time: "1-2 minutes",
+    price: "Free",
+    status: "Blockchain Verification",
+    achievements: [
+      {
+        title: "Stellar Transaction Activity",
+        points: 50,
+        description: "Verify your Stellar wallet has transaction history and activity"
+      }
+    ],
+    requirements: [
+      "Must have a valid Stellar account ID",
+      "Account must have at least 1 transaction",
+      "Account must exist on Stellar network"
+    ]
   }
 } as const;
 

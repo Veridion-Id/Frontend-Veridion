@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/features/dashboard/layout/dashboard-layout";
 import { HumanityScoreSection } from "@/features/dashboard/components/humanity-secore-section";
 import { VerificationSection } from "@/features/dashboard/components/physical-verifications/verification-section";
 import { SocialMediaSection } from "@/features/dashboard/components/social-media-verifications/social-media-section";
+import { BlockchainSection } from "@/features/dashboard/components/blockchain-verifications/blockchain-section";
 
 export default function Dashboard() {
   return (
@@ -14,6 +15,7 @@ export default function Dashboard() {
 
           <div className="space-y-8">
             <SocialMediaSection />
+            <BlockchainSection />
             <VerificationSection />
           </div>
         </div>

@@ -14,7 +14,7 @@ export function decodeGoogleJWT(credential: string): GoogleUser {
     // Decode the JWT payload
     const payload = JSON.parse(atob(credential.split('.')[1]));
     return payload;
-  } catch (error) {
+  } catch {
     throw new Error('Failed to decode Google JWT');
   }
 }

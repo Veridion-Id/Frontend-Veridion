@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/shared/ui/button';
 import { GitHubIcon } from '@/shared/components/icons/social-icons';
 import { useVerificationStore } from '../../../store/verification-store';
@@ -16,7 +16,7 @@ export function GitHubAuth({ onSuccess, onError }: GitHubAuthProps) {
   const { completeVerification, isVerificationCompleted } = useVerificationStore();
 
 
-  const handleGitHubCallback = async (code: string) => {
+  const handleGitHubCallback = useCallback(async (code: string) => {
     setIsLoading(true);
     
     try {
@@ -51,7 +51,7 @@ export function GitHubAuth({ onSuccess, onError }: GitHubAuthProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [completeVerification, onSuccess, onError]);
 
   // Check for GitHub callback on component mount
   useEffect(() => {

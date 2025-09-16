@@ -3,7 +3,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/shared/ui/dialog';
 import { Button } from '@/shared/ui/button';
-import { Badge } from '@/shared/ui/badge';
 import { Card, CardContent } from '@/shared/ui/card';
 import { Separator } from '@/shared/components/separator';
 import { X, Clock, DollarSign, CheckCircle } from 'lucide-react';
@@ -11,6 +10,7 @@ import { GoogleAuth } from './social/google/google-auth';
 import { DiscordAuth } from './social/discord/discord-auth';
 import { GitHubAuth } from './social/github/github-auth';
 import { LinkedInAuth } from './social/linkedin/linkedin-auth';
+import { StellarVerification } from './blockchain/stellar-verification';
 
 interface Achievement {
   readonly title: string;
@@ -38,16 +38,16 @@ export function VerificationModal({
   points,
   time,
   price,
-  status,
-  achievements,
+  status: _status,
+  achievements: _achievements,
   requirements,
   verificationId
 }: VerificationModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#0B0A0A] border-0 p-0">
+      <DialogContent className="bg-[#0e0d0d] border-0 p-0 max-w-4xl h-[95vh] flex flex-col">
         <DialogTitle className="sr-only">{title}</DialogTitle>
-            <div className="flex flex-col h-full p-4">
+        <div className="flex-1 overflow-y-auto p-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white">{title}</h2>
@@ -87,42 +87,10 @@ export function VerificationModal({
             </Card>
           </div>
 
-          {/* Status */}
-          <div className="mb-4">
-            <Badge variant="outline" className="border-blue-500 text-blue-400 bg-blue-500/10 text-xs">
-              {status}
-            </Badge>
-          </div>
 
-          <Separator className="bg-gray-700 mb-4" />
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto space-y-4">
-            {/* Achievements */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-3">Developer Activity</h3>
-              <div className="space-y-2">
-                {achievements.map((achievement, index) => (
-                  <Card key={index} className="bg-gradient-to-br from-card-darker to-card-dark border-gray-700/30">
-                    <CardContent className="p-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium text-white text-sm">{achievement.title}</h4>
-                            <Badge variant="outline" className="border-green-500 text-green-400 bg-green-500/10 text-xs">
-                              +{achievement.points}
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-gray-400 leading-relaxed">
-                            {achievement.description}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
 
             <Separator className="bg-gray-700" />
 
@@ -182,6 +150,16 @@ export function VerificationModal({
                     }}
                     onError={(error) => {
                       console.error('LinkedIn verification failed:', error);
+                    }}
+                  />
+                ) : verificationId === 'stellar-transactions' ? (
+                  <StellarVerification
+                    onComplete={(points, level, transactionCount) => {
+                      console.log('Stellar verification completed:', { points, level, transactionCount });
+                      onClose();
+                    }}
+                    onError={(error) => {
+                      console.error('Stellar verification failed:', error);
                     }}
                   />
                 ) : (

@@ -75,6 +75,44 @@ export const MODAL_DATA = {
       "Account must be at least 7 days old"
     ]
   },
+  "phone-verification": {
+    title: "Verify your phone number",
+    points: "1000",
+    time: "< 2 minutes",
+    price: "Free",
+    status: "Contact Verification",
+    achievements: [
+      {
+        title: "Phone Number Verified",
+        points: 1000,
+        description: "Prove you control a real phone number via SMS OTP."
+      }
+    ],
+    requirements: [
+      "Must have a valid phone number",
+      "Phone number cannot be shared across multiple wallets",
+      "Disposable or VoIP numbers may not be accepted"
+    ]
+  },
+  "email-verification": {
+    title: "Verify your email address",
+    points: "500",
+    time: "< 2 minutes",
+    price: "Free",
+    status: "Contact Verification",
+    achievements: [
+      {
+        title: "Email Address Verified",
+        points: 500,
+        description: "Prove you control a real email address via OTP."
+      }
+    ],
+    requirements: [
+      "Must have a valid email address",
+      "Disposable email domains are not accepted",
+      "Email cannot be shared across multiple wallets"
+    ]
+  },
   "stellar-transactions": {
     title: "Verify your Stellar wallet activity",
     points: "0-50",

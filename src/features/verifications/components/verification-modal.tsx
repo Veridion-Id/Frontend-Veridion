@@ -11,6 +11,8 @@ import { DiscordAuth } from './social/discord/discord-auth';
 import { GitHubAuth } from './social/github/github-auth';
 import { LinkedInAuth } from './social/linkedin/linkedin-auth';
 import { StellarVerification } from './blockchain/stellar-verification';
+import { PhoneVerification } from './contact/phone/phone-verification';
+import { EmailVerification } from './contact/email/email-verification';
 
 interface Achievement {
   readonly title: string;
@@ -161,6 +163,16 @@ export function VerificationModal({
                     onError={(error) => {
                       console.error('Stellar verification failed:', error);
                     }}
+                  />
+                ) : verificationId === 'phone-verification' ? (
+                  <PhoneVerification
+                    onSuccess={() => onClose()}
+                    onError={(error) => console.error('Phone verification failed:', error)}
+                  />
+                ) : verificationId === 'email-verification' ? (
+                  <EmailVerification
+                    onSuccess={() => onClose()}
+                    onError={(error) => console.error('Email verification failed:', error)}
                   />
                 ) : (
               <Button 

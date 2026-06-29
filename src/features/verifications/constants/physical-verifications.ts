@@ -1,9 +1,10 @@
 // Physical verification methods constants
 
-import { 
-  CreditCard, 
-  Smartphone, 
-  Eye, 
+import {
+  CreditCard,
+  Smartphone,
+  Mail,
+  Eye,
   HandMetal
 } from 'lucide-react';
 
@@ -44,6 +45,15 @@ export const physicalVerifications: PhysicalVerification[] = [
     isSecured: true,
     points: 1000,
     count: 15,
+  },
+  {
+    id: "email-verification",
+    title: "Email Verification",
+    description: "Verify your identity using your email address",
+    icon: Mail,
+    isSecured: true,
+    points: 500,
+    count: 20,
   },
   {
     id: "biometrics",
